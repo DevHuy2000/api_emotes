@@ -624,7 +624,7 @@ class CLIENT:
             if self.online_writer and self.whisper_writer == None:
                 await asyncio.gather(task1 , task2)
     async def MaiiiinE(self):
-        Uid , Pw = '',''
+        Uid , Pw = '4562183533','BY_PARAHEX-RIOZDACO0-REDZED'
         
         open_id , access_token = await GeNeRaTeAccEss(Uid , Pw)
 
@@ -684,3 +684,4 @@ async def StarTinG():
 if __name__ == '__main__':
 
     asyncio.run(StarTinG())
+
