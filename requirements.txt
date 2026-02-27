@@ -8,4 +8,5 @@ protobuf
 pycryptodome
 cfonts
 protobuf_decoder
+google-play-scraper
 Flask
