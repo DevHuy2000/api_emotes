@@ -1,10 +1,11 @@
 import requests , os , psutil , sys , jwt , pickle , json , binascii , time , urllib3 , base64 , datetime , re ,socket , threading
 from protobuf_decoder.protobuf_decoder import Parser
-from xC4 import *
+from xPARA import *
 from datetime import datetime
 from google.protobuf.timestamp_pb2 import Timestamp
 from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
+from google_play_scraper import app
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) 
 
@@ -25,10 +26,71 @@ def ToK():
 
 Thread(target=ToK , daemon = True).start()
 
+def GeTToK():  
+    with open("token.txt") as f: return f.read().strip()
 
 
-def equie_emote(JWT,url):
-    url = f"{url}/ChooseEmote"
+def GeT_OB():
+    try:
+        url = "https://version.freefire.info/mscrtfree/live/ver.php?version=2.114.18&lang=en&device=android&channel=android_max&appstore=googleplay_max&region=DEFAULT&whitelist_version=1.3.0&whitelist_sp_version=1.0.0&device_name=samsung%20SM-A165F&device_CPU=ARM64%20FP%20ASIMD%20AES&device_GPU=Mali-G57%20MC2&device_mem=3621"
+        response = requests.get(url)
+        ob = response.json()["latest_release_version"]
+        return ob
+    except:
+        return None
+    
+def obv():
+    ob = GeT_OB()
+    if ob == None:
+        print('Error FeTCinG OB VErsiON ! ')
+        return obv()
+    else:
+        print("OB VERSION = > {}".format(ob))
+        return ob
+    
+
+def lag(JWT):
+
+    url = "https://clientbp.ggblueshark.com/RequestJoinClan"
+
+    headers = {
+        "Accept-Encoding": "gzip",
+        "Authorization": f"Bearer {JWT}",
+        "Connection": "Keep-Alive",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Host": "clientbp.ggblueshark.com",
+        "ReleaseVersion": "OB50",
+        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; G011A Build/PI)",
+        "X-GA": "v1 1",
+        "X-Unity-Version": "2018.4.11f1"
+    }
+
+    data = bytes.fromhex("BA 1F 7A E7 D0 9D AC 6D A3 50 41 72 94 B6 E5 04")  # Replace with the actual body if needed, e.g. "clan_id=1234"
+
+    response = requests.post(url, headers=headers, data=data)
+
+    print("Status:", response.status_code)
+    print("Response:", response.text)
+
+
+def AuToUpDaTE():
+    result = app('com.dts.freefireth',
+                lang="fr",
+                country='fr')
+
+    version = result['version']
+
+
+    r = requests.get(f'https://bdversion.ggbluefox.com/live/ver.php?version={version}&lang=ar&device=android&channel=android&appstore=googleplay&region=ME&whitelist_version=1.3.0&whitelist_sp_version=1.0.0&device_name=google%20G011A&device_CPU=ARMv7%20VFPv3%20NEON%20VMH&device_GPU=Adreno%20(TM)%20640&device_mem=1993').json()
+    #print(r['server_url'],r['latest_release_version'])
+    url , ob = r['server_url'] , r['latest_release_version']
+    
+    return url , ob , version
+
+
+def equipe_emote(JWT):
+
+    url = "https://clientbp.ggblueshark.com/ChooseEmote"
 
     headers = {
         "Accept-Encoding": "gzip",
@@ -36,8 +98,8 @@ def equie_emote(JWT,url):
         "Connection": "Keep-Alive",
         "Content-Type": "application/x-www-form-urlencoded",
         "Expect": "100-continue",
-        #"Host": "clientbp.ggblueshark.com",
-        "ReleaseVersion": "OB51",
+        "Host": "clientbp.ggblueshark.com",
+        "ReleaseVersion": "OB50",
         "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; G011A Build/PI)",
         "X-GA": "v1 1",
         "X-Unity-Version": "2018.4.11f1",
@@ -45,15 +107,9 @@ def equie_emote(JWT,url):
 
     data = bytes.fromhex("CA F6 83 22 2A 25 C7 BE FE B5 1F 59 54 4D B3 13")
 
-    requests.post(url, headers=headers, data=data)
+    r = requests.post(url, headers=headers, data=data)
 
 
-
-
-
-def GeTToK():  
-    with open("token.txt") as f: return f.read().strip()
-    
 def Likes(id):
     try:
         text = requests.get(f"https://tokens-asfufvfshnfkhvbb.francecentral-01.azurewebsites.net/ReQuesT?id={id}&type=likes").text
@@ -74,7 +130,7 @@ def GeT_Name(uid , Token):
     url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"
     headers = {
         'X-Unity-Version': '2018.4.11f1',
-        'ReleaseVersion': 'OB51',
+        'ReleaseVersion': 'OB50',
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-GA': 'v1 1',
         'Authorization': f'Bearer {GeTToK()}',
@@ -87,9 +143,9 @@ def GeT_Name(uid , Token):
     response = requests.post(url , headers=headers , data=data ,verify=False)
     if response.status_code == 200 or 201:
         packet = binascii.hexlify(response.content).decode('utf-8')
-        BesTo_data = json.loads(DeCode_PackEt(packet))      
+        RedZed_data = json.loads(DeCode_PackEt(packet))      
         try:
-            a1 = BesTo_data["1"]["data"]["3"]["data"]
+            a1 = RedZed_data["1"]["data"]["3"]["data"]
             return a1
         except: return ''  
     else: return ''
@@ -99,7 +155,7 @@ def GeT_PLayer_InFo(uid , Token):
     url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"
     headers = {
         'X-Unity-Version': '2018.4.11f1',
-        'ReleaseVersion': 'OB51',
+        'ReleaseVersion': 'OB50',
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-GA': 'v1 1',
         'Authorization': f'Bearer {GeTToK()}',
@@ -111,28 +167,28 @@ def GeT_PLayer_InFo(uid , Token):
     response = requests.post(url , headers=headers , data=data ,verify=False)
     if response.status_code == 200 or 201:
         packet = binascii.hexlify(response.content).decode('utf-8')
-        BesTo_data =  json.loads(DeCode_PackEt(packet))
+        RedZed_data =  json.loads(DeCode_PackEt(packet))
         NoCLan = False   
         try:        
-            a1 = str(BesTo_data["1"]["data"]["1"]["data"])
-            a2 = BesTo_data["1"]["data"]["21"]["data"]
-            a3 = BesTo_data["1"]["data"]["3"]["data"]
-            player_server = BesTo_data["1"]["data"]["5"]["data"]
-            player_bio = BesTo_data["9"]["data"]["9"]["data"]
-            player_level = BesTo_data["1"]["data"]["6"]["data"]
-            account_date = datetime.fromtimestamp(BesTo_data["1"]["data"]["44"]["data"]).strftime("%I:%M %p - %d/%m/%y")
-            last_login = datetime.fromtimestamp(BesTo_data["1"]["data"]["24"]["data"]).strftime("%I:%M %p - %d/%m/%y")
+            a1 = str(RedZed_data["1"]["data"]["1"]["data"])
+            a2 = RedZed_data["1"]["data"]["21"]["data"]
+            a3 = RedZed_data["1"]["data"]["3"]["data"]
+            player_server = RedZed_data["1"]["data"]["5"]["data"]
+            player_bio = RedZed_data["9"]["data"]["9"]["data"]
+            player_level = RedZed_data["1"]["data"]["6"]["data"]
+            account_date = datetime.fromtimestamp(RedZed_data["1"]["data"]["44"]["data"]).strftime("%I:%M %p - %d/%m/%y")
+            last_login = datetime.fromtimestamp(RedZed_data["1"]["data"]["24"]["data"]).strftime("%I:%M %p - %d/%m/%y")
             try:
-                clan_id = BesTo_data["6"]["data"]["1"]["data"]
-                clan_name = BesTo_data["6"]["data"]["2"]["data"]
-                clan_leader = BesTo_data["6"]["data"]["3"]["data"]
-                clan_level = BesTo_data["6"]["data"]["4"]["data"]
-                clan_members_num = BesTo_data["6"]["data"]["6"]["data"]
-                clan_leader_name = BesTo_data["7"]["data"]["3"]["data"]                       
+                clan_id = RedZed_data["6"]["data"]["1"]["data"]
+                clan_name = RedZed_data["6"]["data"]["2"]["data"]
+                clan_leader = RedZed_data["6"]["data"]["3"]["data"]
+                clan_level = RedZed_data["6"]["data"]["4"]["data"]
+                clan_members_num = RedZed_data["6"]["data"]["6"]["data"]
+                clan_leader_name = RedZed_data["7"]["data"]["3"]["data"]                       
             except:
                 NoCLan = True
             if NoCLan:
-            	a = f'''
+                a = f'''
 [b][c][90EE90] [SuccessFully] - Get PLayer s'InFo !
 
 [FFFF00][1] - ProFile InFo :
@@ -146,12 +202,12 @@ def GeT_PLayer_InFo(uid , Token):
  Creating : {account_date}
  LasT LoGin : {last_login}
  
-  [90EE90]Dev : C4 Team OfficieL\n'''            
-            	a = a.replace('[i]','')
-            	return a
+[90EE90]Dev : PARAHEX Team OfficieL\n'''
+                a = a.replace('[i]','')
+                return a
             	  	            	            
-            else:            	          	                        
-            	a = f'''
+            else:
+                a = f'''
 [b][c][90EE90] [SuccessFully] - Get PLayer s'InFo !
 
 [FFFF00][1] - ProFile InFo :
@@ -174,9 +230,9 @@ def GeT_PLayer_InFo(uid , Token):
  Leader s'Uid : {xMsGFixinG(clan_leader)}
  Leader s'Name : {clan_leader_name}
 
-  [90EE90]Dev : C4 Team OfficieL\n'''	
-            	a = a.replace('[i]','')    
-            	return a
+  [90EE90]Dev : PARAHEX Team OfficieL\n'''
+                a = a.replace('[i]','')
+                return a
                                        
         except Exception as e:
            return f'\n[b][c][FFD700]FaiLEd GeTinG PLayer InFo !\n'
@@ -188,7 +244,7 @@ def DeLet_Uid(id , Tok):
     url = 'https://clientbp.common.ggbluefox.com/RemoveFriend'
     headers = {
         'X-Unity-Version': '2018.4.11f1',
-        'ReleaseVersion': 'OB51',
+        'ReleaseVersion': 'OB50',
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-GA': 'v1 1',
         'Authorization': f'Bearer {Tok}',
